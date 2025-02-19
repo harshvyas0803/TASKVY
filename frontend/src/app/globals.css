@@ -1,0 +1,16 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define default (light mode) color variables */
+:root {
+  --background: #ffffff;  /* light background */
+  --foreground: #000000;  /* dark text */
+}
+
+/* When dark mode is enabled, override the variables */
+.dark {
+  --background: #000308;  /* dark background */
+  --foreground: #f7fafc;  /* light text */
+}
