@@ -1,7 +1,9 @@
 "use client";
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import taskvylogo from '../../../public/assets/taskvylogo.png';
 import {
   FaTachometerAlt,
   FaTasks,
@@ -14,12 +16,24 @@ import {
 import Hamburger from 'hamburger-react';
 
 const Sidebar = () => {
-  // When isOpen is true, the sidebar is expanded.
   const [isOpen, setIsOpen] = useState(true);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+  // Automatically adjust sidebar based on window width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsOpen(false);
+      } else {
+        setIsOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
 
   const navItems = [
     { label: 'Dashboard', icon: <FaTachometerAlt />, route: '/' },
@@ -34,30 +48,35 @@ const Sidebar = () => {
   return (
     <div className="flex">
       <div
-        className={`bg-black text-white h-screen p-4 transition-all duration-300 ${
-          isOpen ? 'w-52' : 'w-16'
-        }`}
+        className={`h-screen p-5 transition-all duration-300 ${
+          isOpen ? 'w-60' : 'w-12'
+        } bg-gradient-to-br from-gray-200 to-gray-100 dark:from-gray-900 dark:to-black text-gray-900 dark:text-white`}
       >
         <div className="flex items-center justify-between">
-          {isOpen && <h1 className="text-2xl font-bold">MyApp</h1>}
-          <button onClick={toggleSidebar} className="hover:scale-110 focus:outline-none">
-            <Hamburger toggled={isOpen} toggle={setIsOpen} />
+          {isOpen && (
+            <h1 className="text-2xl font-bold">
+              <Image src={taskvylogo} alt="Logo" width={100} height={100} />
+            </h1>
+          )}
+          <button onClick={toggleSidebar} className="p-2 md:p-0 focus:outline-none">
+            <Hamburger toggled={isOpen} toggle={toggleSidebar} size={24} color="#fff" />
           </button>
         </div>
-        <nav className="mt-8">
+        <nav className="mt-10 space-y-6">
           {navItems.map((item, index) => (
-            <Link
-              href={item.route}
-              key={index}
-              className="flex items-center gap-4 p-2 my-2 rounded hover:bg-gray-700 transition-colors duration-200"
-            >
-              <span>{item.icon}</span>
-              {isOpen && <span>{item.label}</span>}
+            <Link href={item.route} key={index} className="group block">
+              <div className="flex items-center gap-3 p-2 rounded-lg transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-700">
+                <span className="text-xl">{item.icon}</span>
+                {isOpen && (
+                  <span className="text-lg font-medium group-hover:text-gray-700 dark:group-hover:text-gray-200">
+                    {item.label}
+                  </span>
+                )}
+              </div>
             </Link>
           ))}
         </nav>
       </div>
-      
     </div>
   );
 };

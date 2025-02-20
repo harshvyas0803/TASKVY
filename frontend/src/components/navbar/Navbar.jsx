@@ -1,17 +1,13 @@
 "use client";
-import React from 'react'
-import Darkmodetoggle from '../darkmodetoggle/Darkmodetoggle'
+import React from 'react';
+import Darkmodetoggle from '../darkmodetoggle/Darkmodetoggle';
 
 const Navbar = () => {
   return (
-    <div>
-
-
-{/* <Darkmodetoggle/> */}
-
-
+    <div className="p-4">
+      <Darkmodetoggle />
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

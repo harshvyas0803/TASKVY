@@ -1,52 +1,50 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import './DarkmodeToggle.css';
+import React, { useEffect, useState } from 'react';
 
-const DarkModeToggle = () => {
-  const [darkMode, setDarkMode] = useState(false);
+const Darkmodetoggle = () => {
+  const [isChecked, setIsChecked] = useState(false);
 
-  // On initial mount, read from localStorage and update the DOM accordingly
+  // Toggle the dark mode class on the <html> element when isChecked changes.
   useEffect(() => {
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(isDark);
-    if (isDark) {
+    if (isChecked) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, []);
+  }, [isChecked]);
 
-  // Update the document and localStorage when darkMode changes
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
-    }
-  }, [darkMode]);
-
-  const handleToggle = () => {
-    setDarkMode(prev => !prev);
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <label className="themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center">
       <input
         type="checkbox"
-        className="theme-checkbox"
-        checked={darkMode}
-        onChange={handleToggle}
-        id="theme-toggle"
+        checked={isChecked}
+        onChange={handleCheckboxChange}
+        className="sr-only"
       />
- 
-      <label htmlFor="theme-toggle" className="cursor-pointer select-none">
-        {darkMode ? "Light Mode" : "Dark Mode"}
-      </label>
-    </div>
+      <span className="label flex items-center text-sm font-medium text-black">
+        Light
+      </span>
+      <span
+        className={`slider mx-4 flex h-8 w-[60px] items-center rounded-full p-1 duration-200 ${
+          isChecked ? 'bg-[#212b36]' : 'bg-[#CCCCCE]'
+        }`}
+      >
+        <span
+          className={`dot h-6 w-6 rounded-full bg-white duration-200 ${
+            isChecked ? 'translate-x-[28px]' : ''
+          }`}
+        ></span>
+      </span>
+      <span className="label flex items-center text-sm font-medium text-black">
+        Dark
+      </span>
+    </label>
   );
 };
 
-export default DarkModeToggle;
+export default Darkmodetoggle;
