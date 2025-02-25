@@ -1,5 +1,5 @@
-/* Custom 3D effect for the navbar */
-.navbar-3d {
+
+ .navbar-3d {
     perspective: 1200px;
     transform-style: preserve-3d;
   }
