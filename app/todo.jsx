@@ -14,6 +14,7 @@ import { DateTimePickerAndroid, DateTimePicker } from "@react-native-community/d
 import { useRouter } from "expo-router";
 import Animated, { Layout, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function TodoScreen() {
   const [tasks, setTasks] = useState([]);
@@ -191,132 +192,134 @@ export default function TodoScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Input Area with Glass Morphism */}
-      <BlurView intensity={50} tint="light" style={styles.blurContainer}>
-        <Text style={styles.title}>My Tasks</Text>
-        <TextInput
-          label="Title"
-          value={newTask.title}
-          onChangeText={(text) => setNewTask({ ...newTask, title: text })}
-          style={styles.input}
-          theme={{ colors: { primary: "purple", text: "#000" } }}
-          mode="outlined"
-        />
-        <TextInput
-          label="Description"
-          value={newTask.description}
-          onChangeText={(text) => setNewTask({ ...newTask, description: text })}
-          style={styles.input}
-          theme={{ colors: { primary: "purple", text: "#000" } }}
-          mode="outlined"
-        />
-        <TouchableOpacity onPress={showDatePickerHandler} style={styles.dateInput}>
-          <Text style={{ color: newTask.deadline ? "#000" : "#888" }}>
-            {newTask.deadline || "Select Deadline"}
-          </Text>
-        </TouchableOpacity>
-        {Platform.OS === "ios" && showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="datetime"
-            display="default"
-            onChange={onChangeDate}
+    <LinearGradient colors={["#5a379f", "#203a43", "#2c5364"]} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        {/* Input Area with Glass Morphism */}
+        <BlurView intensity={50} tint="dark" style={styles.blurContainer}>
+          <Text style={styles.title}>My Tasks</Text>
+          <TextInput
+            label="Title"
+            value={newTask.title}
+            onChangeText={(text) => setNewTask({ ...newTask, title: text })}
+            style={styles.input}
+            theme={{ colors: { primary: "#9C27B0", text: "#fff", placeholder: "#bbb" } }}
+            mode="outlined"
           />
-        )}
-        <View style={styles.priorityContainer}>
-          {["Low", "Medium", "High"].map(level => (
-            <Chip
-              key={level}
-              mode={newTask.priority === level ? "contained" : "outlined"}
-              onPress={() => setNewTask({ ...newTask, priority: level })}
-              style={getChipStyle(level)}
-            >
-              {level}
-            </Chip>
-          ))}
-        </View>
-        <Button mode="contained" onPress={addTask} style={styles.addButton}>
-          Add Task
-        </Button>
-        <Menu
-          visible={menuVisible}
-          onDismiss={() => setMenuVisible(false)}
-          anchor={<Button onPress={() => setMenuVisible(true)}>Filter: {filter}</Button>}
-        >
-          {["All", "Low", "Medium", "High"].map(level => (
-            <Menu.Item
-              key={level}
-              title={level}
-              onPress={() => {
-                setFilter(level);
-                setMenuVisible(false);
-              }}
+          <TextInput
+            label="Description"
+            value={newTask.description}
+            onChangeText={(text) => setNewTask({ ...newTask, description: text })}
+            style={styles.input}
+            theme={{ colors: { primary: "#9C27B0", text: "#fff", placeholder: "#bbb" } }}
+            mode="outlined"
+          />
+          <TouchableOpacity onPress={showDatePickerHandler} style={styles.dateInput}>
+            <Text style={{ color: newTask.deadline ? "#fff" : "#bbb" }}>
+              {newTask.deadline || "Select Deadline"}
+            </Text>
+          </TouchableOpacity>
+          {Platform.OS === "ios" && showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="datetime"
+              display="default"
+              onChange={onChangeDate}
             />
-          ))}
-        </Menu>
-      </BlurView>
-
-      {/* Vertical list of small task cards */}
-      <View style={styles.listContainer}>
-        <FlatList
-          data={filteredTasks}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => router.push("/fulllist")}>
-              <Animated.View
-                entering={SlideInRight}
-                exiting={SlideOutLeft}
-                layout={Layout.springify()}
-                style={styles.smallCardWrapper}
-              >
-                <Card
-                  style={[
-                    styles.smallCard,
-                    item.completed && styles.completed,
-                    { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 }
-                  ]}
-                >
-                  <Card.Title title={item.title} />
-                  <Card.Content>
-                    <Text numberOfLines={1}>{item.deadline}</Text>
-                  </Card.Content>
-                </Card>
-              </Animated.View>
-            </TouchableOpacity>
           )}
-          contentContainerStyle={{ paddingBottom: 80 }}
+          <View style={styles.priorityContainer}>
+            {["Low", "Medium", "High"].map(level => (
+              <Chip
+                key={level}
+                mode={newTask.priority === level ? "contained" : "outlined"}
+                onPress={() => setNewTask({ ...newTask, priority: level })}
+                style={getChipStyle(level)}
+                textStyle={{ color: "#fff" }}
+              >
+                {level}
+              </Chip>
+            ))}
+          </View>
+          <Button mode="contained" onPress={addTask} style={styles.addButton}>
+            Add Task
+          </Button>
+          <Menu
+            visible={menuVisible}
+            onDismiss={() => setMenuVisible(false)}
+            anchor={<Button onPress={() => setMenuVisible(true)}>Filter: {filter}</Button>}
+          >
+            {["All", "Low", "Medium", "High"].map(level => (
+              <Menu.Item
+                key={level}
+                title={level}
+                onPress={() => {
+                  setFilter(level);
+                  setMenuVisible(false);
+                }}
+              />
+            ))}
+          </Menu>
+        </BlurView>
+
+        {/* Vertical list of small task cards */}
+        <View style={styles.listContainer}>
+          <FlatList
+            data={filteredTasks}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => router.push("/fulllist")}>
+                <Animated.View
+                  entering={SlideInRight}
+                  exiting={SlideOutLeft}
+                  layout={Layout.springify()}
+                  style={styles.smallCardWrapper}
+                >
+                  <Card
+                    style={[
+                      styles.smallCard,
+                      item.completed && styles.completed,
+                      { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 }
+                    ]}
+                  >
+                    <Card.Title title={item.title} titleStyle={{ color: "#fff" }} />
+                    <Card.Content>
+                      <Text style={{ color: "#fff" }} numberOfLines={1}>{item.deadline}</Text>
+                    </Card.Content>
+                  </Card>
+                </Animated.View>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={{ paddingBottom: 80 }}
+          />
+        </View>
+
+        <FAB
+          icon="format-list-bulleted"
+          label="Full List"
+          style={styles.fab}
+          onPress={() => router.push("/fulllist")}
         />
       </View>
-
-      <FAB
-        icon="format-list-bulleted"
-        label="Full List"
-        style={styles.fab}
-        onPress={() => router.push("/fulllist")}
-      />
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: "#f5f5f5", 
     padding: 20 
   },
   blurContainer: {
     padding: 20,
     borderRadius: 20,
     marginBottom: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
   },
   listContainer: {
     flex: 1,
   },
   title: { 
     fontSize: 24, 
-    color: "purple",
+    color: "#fff",
     fontWeight: "bold", 
     marginBottom: 10 
   },
@@ -340,7 +343,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.3)"
+    backgroundColor: "rgba(0,0,0,0.3)"
   },
   fab: { 
     position: "absolute", 
@@ -356,10 +359,9 @@ const styles = StyleSheet.create({
     padding: 10,
     minHeight: 100,
     borderRadius: 10,
+    backgroundColor: "#424242",
   },
   completed: { 
-    backgroundColor: "#d3d3d3" 
+    backgroundColor: "#616161" 
   },
 });
-
- 

@@ -4,6 +4,7 @@ import { Card, Text, Button, TextInput, Portal, Modal, Chip, FAB } from "react-n
 import * as SecureStore from "expo-secure-store";
 import Animated, { Layout, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 
 const FullListScreen = () => {
   const [tasks, setTasks] = useState([]);
@@ -62,7 +63,7 @@ const FullListScreen = () => {
     }
   };
 
-  // Optional: Style for editing chips
+  // Style for editing chips
   const getChipStyle = (level) => {
     let baseColor = getPriorityColor(level);
     return {
@@ -74,159 +75,181 @@ const FullListScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Full Task List</Text>
-      <FlatList
-        data={tasks}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Animated.View
-            entering={SlideInRight}
-            exiting={SlideOutLeft}
-            layout={Layout.springify()}
-          >
-            <Card
-              style={[
-                styles.card,
-                item.completed && styles.completed,
-                { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 },
-              ]}
+    <LinearGradient  colors={["#5e4d80", "#203a43", "#2c5364"]} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Full Task List</Text>
+        <FlatList
+          data={tasks}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Animated.View
+              entering={SlideInRight}
+              exiting={SlideOutLeft}
+              layout={Layout.springify()}
             >
-              <Card.Title title={item.title} subtitle={`Priority: ${item.priority}`} />
-              <Card.Content>
-                <Text>{item.description}</Text>
-                <Text>Deadline: {item.deadline}</Text>
-              </Card.Content>
-              <Card.Actions>
-                <Button onPress={() => toggleTask(item.id)}>
-                  {item.completed ? "Undo" : "Complete"}
-                </Button>
-                <Button
-                  onPress={() => {
-                    setEditingTask(item);
-                    setModalVisible(true);
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button onPress={() => deleteTask(item.id)}>Delete</Button>
-              </Card.Actions>
-            </Card>
-          </Animated.View>
-        )}
-        contentContainerStyle={{ paddingBottom: 80 }}
-      />
-
-      <Portal>
-        <Modal
-          visible={modalVisible}
-          onDismiss={() => {
-            setModalVisible(false);
-            setEditingTask(null);
-          }}
-          contentContainerStyle={styles.modalContainer}
-        >
-          {editingTask && (
-            <View>
-              <Text style={styles.modalTitle}>Edit Task</Text>
-              <TextInput
-                label="Title"
-                value={editingTask.title}
-                onChangeText={(text) =>
-                  setEditingTask({ ...editingTask, title: text })
-                }
-                style={styles.input}
-              />
-              <TextInput
-                label="Description"
-                value={editingTask.description}
-                onChangeText={(text) =>
-                  setEditingTask({ ...editingTask, description: text })
-                }
-                style={styles.input}
-              />
-              <TextInput
-                label="Deadline"
-                value={editingTask.deadline}
-                onChangeText={(text) =>
-                  setEditingTask({ ...editingTask, deadline: text })
-                }
-                style={styles.input}
-              />
-              {/* Priority selector using Chips */}
-              <View style={styles.priorityContainer}>
-                {["Low", "Medium", "High"].map((level) => (
-                  <Chip
-                    key={level}
-                    mode={editingTask.priority === level ? "contained" : "outlined"}
-                    onPress={() =>
-                      setEditingTask({ ...editingTask, priority: level })
-                    }
-                    style={getChipStyle(level)}
+              <Card
+                style={[
+                  styles.card,
+                  item.completed && styles.completed,
+                  { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 },
+                ]}
+              >
+                <Card.Title 
+                  title={item.title} 
+                  subtitle={`Priority: ${item.priority}`}
+                  titleStyle={{ color: "#fff" }}
+                  subtitleStyle={{ color: "#ccc" }}
+                />
+                <Card.Content>
+                  <Text style={{ color: "#fff" }}>{item.description}</Text>
+                  <Text style={{ color: "#fff" }}>Deadline: {item.deadline}</Text>
+                </Card.Content>
+                <Card.Actions>
+                  <Button onPress={() => toggleTask(item.id)} color="#9C27B0">
+                    {item.completed ? "Undo" : "Complete"}
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      setEditingTask(item);
+                      setModalVisible(true);
+                    }}
+                    color="#9C27B0"
                   >
-                    {level}
-                  </Chip>
-                ))}
-              </View>
-              <View style={styles.modalButtons}>
-                <Button mode="contained" onPress={updateTask} style={styles.modalButton}>
-                  Save
-                </Button>
-                <Button
-                  mode="outlined"
-                  onPress={() => {
-                    setModalVisible(false);
-                    setEditingTask(null);
-                  }}
-                  style={styles.modalButton}
-                >
-                  Cancel
-                </Button>
-              </View>
-            </View>
+                    Edit
+                  </Button>
+                  <Button onPress={() => deleteTask(item.id)} color="#9C27B0">
+                    Delete
+                  </Button>
+                </Card.Actions>
+              </Card>
+            </Animated.View>
           )}
-        </Modal>
-      </Portal>
+          contentContainerStyle={{ paddingBottom: 80 }}
+        />
 
-      {/* Stats FAB */}
-      <FAB
-        icon="chart-bar"
-        style={styles.fab}
-        onPress={() => router.push("/stats")}
-      />
-    </View>
+        <Portal>
+          <Modal
+            visible={modalVisible}
+            onDismiss={() => {
+              setModalVisible(false);
+              setEditingTask(null);
+            }}
+            contentContainerStyle={styles.modalContainer}
+          >
+            {editingTask && (
+              <View>
+                <Text style={styles.modalTitle}>Edit Task</Text>
+                <TextInput
+                  label="Title"
+                  value={editingTask.title}
+                  onChangeText={(text) =>
+                    setEditingTask({ ...editingTask, title: text })
+                  }
+                  style={styles.input}
+                  theme={{ colors: { primary: "#9C27B0", text: "#fff", placeholder: "#bbb" } }}
+                  mode="outlined"
+                />
+                <TextInput
+                  label="Description"
+                  value={editingTask.description}
+                  onChangeText={(text) =>
+                    setEditingTask({ ...editingTask, description: text })
+                  }
+                  style={styles.input}
+                  theme={{ colors: { primary: "#9C27B0", text: "#fff", placeholder: "#bbb" } }}
+                  mode="outlined"
+                />
+                <TextInput
+                  label="Deadline"
+                  value={editingTask.deadline}
+                  onChangeText={(text) =>
+                    setEditingTask({ ...editingTask, deadline: text })
+                  }
+                  style={styles.input}
+                  theme={{ colors: { primary: "#9C27B0", text: "#fff", placeholder: "#bbb" } }}
+                  mode="outlined"
+                />
+                {/* Priority selector using Chips */}
+                <View style={styles.priorityContainer}>
+                  {["Low", "Medium", "High"].map((level) => (
+                    <Chip
+                      key={level}
+                      mode={editingTask.priority === level ? "contained" : "outlined"}
+                      onPress={() =>
+                        setEditingTask({ ...editingTask, priority: level })
+                      }
+                      style={getChipStyle(level)}
+                      textStyle={{ color: "#fff" }}
+                    >
+                      {level}
+                    </Chip>
+                  ))}
+                </View>
+                <View style={styles.modalButtons}>
+                  <Button mode="contained" onPress={updateTask} style={styles.modalButton}>
+                    Save
+                  </Button>
+                  <Button
+                    mode="outlined"
+                    onPress={() => {
+                      setModalVisible(false);
+                      setEditingTask(null);
+                    }}
+                    style={styles.modalButton}
+                  >
+                    Cancel
+                  </Button>
+                </View>
+              </View>
+            )}
+          </Modal>
+        </Portal>
+
+        <FAB
+          icon="chart-bar"
+          style={styles.fab}
+          onPress={() => router.push("/stats")}
+          label="Stats"
+        />
+      </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#fff", 
-    padding: 20 
+  gradient: { 
+    flex: 1 
+  },
+  container: {
+    flex: 1,
+    padding: 20,
   },
   title: { 
     fontSize: 24, 
     fontWeight: "bold", 
     marginBottom: 20,
-    color: "purple"
+    color: "#fff",
   },
   card: { 
     marginVertical: 5, 
-    padding: 10 
+    padding: 10,
+    backgroundColor: "#424242",
+    borderRadius: 10,
   },
   completed: { 
-    backgroundColor: "#d3d3d3" 
+    backgroundColor: "#616161" 
   },
   input: { 
-    marginBottom: 10 
+    marginBottom: 10,
+    backgroundColor: "transparent",
   },
   priorityContainer: { 
     flexDirection: "row", 
     justifyContent: "space-around", 
-    marginBottom: 10 
+    marginBottom: 10,
   },
   modalContainer: {
-    backgroundColor: "white",
+    backgroundColor: "#424242",
     padding: 20,
     margin: 20,
     borderRadius: 10,
@@ -235,6 +258,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 10,
     fontWeight: "bold",
+    color: "#fff",
   },
   modalButtons: {
     flexDirection: "row",
@@ -248,7 +272,8 @@ const styles = StyleSheet.create({
   fab: { 
     position: "absolute", 
     right: 20, 
-    bottom: 20 
+    bottom: 20,
+    backgroundColor: "#9C27B0",
   },
 });
 
