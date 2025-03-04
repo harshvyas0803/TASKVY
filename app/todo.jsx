@@ -43,7 +43,6 @@ export default function TodoScreen() {
       Alert.alert("Error", "Title and Deadline are required!");
       return;
     }
-
     const updatedTasks = [
       ...tasks, 
       { id: Date.now().toString(), ...newTask, completed: false }
@@ -69,7 +68,6 @@ export default function TodoScreen() {
     const deadlineTime = new Date(task.deadline).getTime();
     const now = new Date().getTime();
     const delay = deadlineTime - now;
-
     if (delay > 0) {
       await Notifications.scheduleNotificationAsync({
         content: { title: "Task Reminder", body: `Don't forget: ${task.title}` },
@@ -184,6 +182,20 @@ export default function TodoScreen() {
     }
   };
 
+  // Helper to get priority color for card indicator
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "#FF4500";
+      case "Medium":
+        return "#FFD700";
+      case "Low":
+        return "#32CD32";
+      default:
+        return "#ccc";
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputArea}>
@@ -263,7 +275,12 @@ export default function TodoScreen() {
               exiting={SlideOutLeft} 
               layout={Layout.springify()}
             >
-              <Card style={[styles.card, item.completed && styles.completed]}>
+              <Card style={[
+                  styles.card, 
+                  item.completed && styles.completed,
+                  { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 }
+                ]}
+              >
                 <Card.Title title={item.title} subtitle={`Priority: ${item.priority}`} />
                 <Card.Content>
                   <Text>{item.description}</Text>
@@ -285,11 +302,12 @@ export default function TodoScreen() {
       </View>
 
       <FAB 
-        icon="chart-bar" 
-        label="View Stats" 
-        style={styles.fab} 
-        onPress={() => router.push("/stats")} 
-      />
+  icon="format-list-bulleted" 
+  label="Full lists" 
+  style={styles.fab} 
+  onPress={() => router.push("/fulllist")} 
+/>
+
     </View>
   );
 }
@@ -304,7 +322,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   listContainer: {
-    flex: 1,
+    flex:1,
+    
+     
   },
   title: { 
     fontSize: 24, 
