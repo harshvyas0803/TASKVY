@@ -13,6 +13,7 @@ import * as Notifications from "expo-notifications";
 import { DateTimePickerAndroid, DateTimePicker } from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import Animated, { Layout, SlideInRight, SlideOutLeft } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
 
 export default function TodoScreen() {
   const [tasks, setTasks] = useState([]);
@@ -21,7 +22,7 @@ export default function TodoScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [tempDate, setTempDate] = useState(null); // Temporary storage for Android date selection
+  const [tempDate, setTempDate] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function TodoScreen() {
       return;
     }
     const updatedTasks = [
-      ...tasks, 
+      ...tasks,
       { id: Date.now().toString(), ...newTask, completed: false }
     ];
     saveTasks(updatedTasks);
@@ -76,11 +77,10 @@ export default function TodoScreen() {
     }
   };
 
-  const filteredTasks = filter === "All" 
-    ? tasks 
+  const filteredTasks = filter === "All"
+    ? tasks
     : tasks.filter(task => task.priority === filter);
 
-  // Helper: Format a Date as "YYYY-MM-DD HH:MM"
   const formatDateTime = (selectedDate) => {
     const year = selectedDate.getFullYear();
     const month = ("0" + (selectedDate.getMonth() + 1)).slice(-2);
@@ -90,7 +90,7 @@ export default function TodoScreen() {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
-  // For iOS: Use inline datetime picker
+  // For iOS: Inline datetime picker
   const onChangeDate = (event, selectedDate) => {
     if (Platform.OS === "ios" && event.type === "dismissed") {
       setShowDatePicker(false);
@@ -104,13 +104,11 @@ export default function TodoScreen() {
     setShowDatePicker(false);
   };
 
-  // For Android: First open date picker, then time picker
+  // For Android: Date picker then time picker
   const onChangeAndroidDate = (event, selectedDate) => {
-    if (event.type === "dismissed") {
-      return;
-    }
+    if (event.type === "dismissed") return;
     if (selectedDate) {
-      setTempDate(selectedDate); // Store the selected date part
+      setTempDate(selectedDate);
       DateTimePickerAndroid.open({
         value: selectedDate,
         onChange: onChangeAndroidTime,
@@ -121,9 +119,7 @@ export default function TodoScreen() {
   };
 
   const onChangeAndroidTime = (event, selectedTime) => {
-    if (event.type === "dismissed") {
-      return;
-    }
+    if (event.type === "dismissed") return;
     const datePart = tempDate || date;
     const newDate = new Date(datePart);
     newDate.setHours(selectedTime.getHours());
@@ -147,18 +143,17 @@ export default function TodoScreen() {
     }
   };
 
-  // Helper function to get Chip style based on priority level
   const getChipStyle = (level) => {
     let baseColor;
     switch (level) {
       case "High":
-        baseColor = "#FF4500"; // Red
+        baseColor = "#FF4500";
         break;
       case "Medium":
-        baseColor = "#FFD700"; // Yellow
+        baseColor = "#FFD700";
         break;
       case "Low":
-        baseColor = "#32CD32"; // Green
+        baseColor = "#32CD32";
         break;
       default:
         baseColor = "#ccc";
@@ -182,7 +177,6 @@ export default function TodoScreen() {
     }
   };
 
-  // Helper to get priority color for card indicator
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "High":
@@ -198,30 +192,30 @@ export default function TodoScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputArea}>
+      {/* Input Area with Glass Morphism */}
+      <BlurView intensity={50} tint="light" style={styles.blurContainer}>
         <Text style={styles.title}>My Tasks</Text>
-
-        {/* Task Input Fields */}
-        <TextInput 
-          label="Title" 
-          value={newTask.title} 
-          onChangeText={(text) => setNewTask({ ...newTask, title: text })} 
-          style={styles.input} 
+        <TextInput
+          label="Title"
+          value={newTask.title}
+          onChangeText={(text) => setNewTask({ ...newTask, title: text })}
+          style={styles.input}
+          theme={{ colors: { primary: "purple", text: "#000" } }}
+          mode="outlined"
         />
-        <TextInput 
-          label="Description" 
-          value={newTask.description} 
-          onChangeText={(text) => setNewTask({ ...newTask, description: text })} 
-          style={styles.input} 
+        <TextInput
+          label="Description"
+          value={newTask.description}
+          onChangeText={(text) => setNewTask({ ...newTask, description: text })}
+          style={styles.input}
+          theme={{ colors: { primary: "purple", text: "#000" } }}
+          mode="outlined"
         />
-
-        {/* Date-Time Picker */}
         <TouchableOpacity onPress={showDatePickerHandler} style={styles.dateInput}>
           <Text style={{ color: newTask.deadline ? "#000" : "#888" }}>
             {newTask.deadline || "Select Deadline"}
           </Text>
         </TouchableOpacity>
-
         {Platform.OS === "ios" && showDatePicker && (
           <DateTimePicker
             value={date}
@@ -230,13 +224,11 @@ export default function TodoScreen() {
             onChange={onChangeDate}
           />
         )}
-
-        {/* Priority Selector */}
         <View style={styles.priorityContainer}>
           {["Low", "Medium", "High"].map(level => (
-            <Chip 
-              key={level} 
-              mode={newTask.priority === level ? "contained" : "outlined"} 
+            <Chip
+              key={level}
+              mode={newTask.priority === level ? "contained" : "outlined"}
               onPress={() => setNewTask({ ...newTask, priority: level })}
               style={getChipStyle(level)}
             >
@@ -244,70 +236,65 @@ export default function TodoScreen() {
             </Chip>
           ))}
         </View>
-
         <Button mode="contained" onPress={addTask} style={styles.addButton}>
           Add Task
         </Button>
-
         <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
           anchor={<Button onPress={() => setMenuVisible(true)}>Filter: {filter}</Button>}
         >
           {["All", "Low", "Medium", "High"].map(level => (
-            <Menu.Item 
-              key={level} 
-              title={level} 
-              onPress={() => { setFilter(level); setMenuVisible(false); }} 
+            <Menu.Item
+              key={level}
+              title={level}
+              onPress={() => {
+                setFilter(level);
+                setMenuVisible(false);
+              }}
             />
           ))}
         </Menu>
-      </View>
+      </BlurView>
 
-      {/* Task List */}
+      {/* Vertical list of small task cards */}
       <View style={styles.listContainer}>
         <FlatList
           data={filteredTasks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Animated.View 
-              entering={SlideInRight} 
-              exiting={SlideOutLeft} 
-              layout={Layout.springify()}
-            >
-              <Card style={[
-                  styles.card, 
-                  item.completed && styles.completed,
-                  { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 }
-                ]}
+            <TouchableOpacity onPress={() => router.push("/fulllist")}>
+              <Animated.View
+                entering={SlideInRight}
+                exiting={SlideOutLeft}
+                layout={Layout.springify()}
+                style={styles.smallCardWrapper}
               >
-                <Card.Title title={item.title} subtitle={`Priority: ${item.priority}`} />
-                <Card.Content>
-                  <Text>{item.description}</Text>
-                  <Text>⏳ {item.deadline}</Text>
-                </Card.Content>
-                <Card.Actions>
-                  <Button onPress={() => toggleTask(item.id)}>
-                    {item.completed ? "Undo" : "Complete"}
-                  </Button>
-                  <Button onPress={() => deleteTask(item.id)}>
-                    Delete
-                  </Button>
-                </Card.Actions>
-              </Card>
-            </Animated.View>
+                <Card
+                  style={[
+                    styles.smallCard,
+                    item.completed && styles.completed,
+                    { borderLeftColor: getPriorityColor(item.priority), borderLeftWidth: 5 }
+                  ]}
+                >
+                  <Card.Title title={item.title} />
+                  <Card.Content>
+                    <Text numberOfLines={1}>{item.deadline}</Text>
+                  </Card.Content>
+                </Card>
+              </Animated.View>
+            </TouchableOpacity>
           )}
           contentContainerStyle={{ paddingBottom: 80 }}
         />
       </View>
 
-      <FAB 
-  icon="format-list-bulleted" 
-  label="Full lists" 
-  style={styles.fab} 
-  onPress={() => router.push("/fulllist")} 
-/>
-
+      <FAB
+        icon="format-list-bulleted"
+        label="Full List"
+        style={styles.fab}
+        onPress={() => router.push("/fulllist")}
+      />
     </View>
   );
 }
@@ -318,37 +305,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5", 
     padding: 20 
   },
-  inputArea: {
+  blurContainer: {
+    padding: 20,
+    borderRadius: 20,
     marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   listContainer: {
-    flex:1,
-    
-     
+    flex: 1,
   },
   title: { 
     fontSize: 24, 
-    color: "black",
+    color: "purple",
     fontWeight: "bold", 
     marginBottom: 10 
   },
   input: { 
-    marginBottom: 10 
-  },
-  card: { 
-    marginVertical: 5, 
-    padding: 10 
-  },
-  completed: { 
-    backgroundColor: "#d3d3d3" 
+    marginBottom: 10,
+    backgroundColor: "transparent",
+    borderRadius: 10,
   },
   priorityContainer: { 
     flexDirection: "row", 
     justifyContent: "space-around", 
     marginBottom: 10 
-  },
-  chip: { 
-    marginHorizontal: 5 
   },
   addButton: { 
     marginTop: 10 
@@ -356,15 +336,30 @@ const styles = StyleSheet.create({
   dateInput: {
     padding: 12,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    borderColor: "rgba(255,255,255,0.7)",
+    borderRadius: 10,
     marginBottom: 10,
     alignItems: "center",
-    backgroundColor: "#fff"
+    backgroundColor: "rgba(255,255,255,0.3)"
   },
   fab: { 
     position: "absolute", 
     right: 20, 
     bottom: 20 
   },
+  smallCardWrapper: {
+    padding: 5,
+    marginBottom: 10,
+  },
+  smallCard: {
+    marginVertical: 5,
+    padding: 10,
+    minHeight: 100,
+    borderRadius: 10,
+  },
+  completed: { 
+    backgroundColor: "#d3d3d3" 
+  },
 });
+
+ 
