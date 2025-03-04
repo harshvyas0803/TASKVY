@@ -1,45 +1,48 @@
-# Welcome to your TacTix app 👋
+# Taskvy - A To-Do App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![Taskvy Screenshot](https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0001.jpg?raw=true)
+![Taskvy Screenshot](https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0002.jpg?raw=true)
+![Taskvy Screenshot](https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0003.jpg?raw=true)
+![Taskvy Screenshot](https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0004.jpg?raw=true)
+![Taskvy Screenshot](https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0005.jpg?raw=true)
+![Taskvy Screenshot](https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0006.jpg?raw=true)
 
-## Get started
 
-1. Install dependencies
+Taskvy is a cross-platform To-Do application built using **React Native** and **Expo**. This app offers an intuitive interface to manage your tasks effectively, with smooth navigation and a modern design that enhances your productivity.
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## Features
 
-   ```bash
-    npx expo start
-   ```
+- **Cross-Platform:** Seamless performance on both Android and iOS devices.
+- **Intuitive UI:** User-friendly interface for quick task management.
+- **Smooth Navigation:** Effortless navigation throughout the app.
+- **Modern Design:** Clean and responsive design for an enhanced user experience.
+- **Efficient Performance:** Optimized for responsiveness and smooth interactions.
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Tech Stack
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Framework:** React Native, Expo
+- **Libraries:**
+  - [@expo/vector-icons](https://docs.expo.dev/guides/icons/)
+  - [@react-navigation/native](https://reactnavigation.org/)
+  - [@react-navigation/bottom-tabs](https://reactnavigation.org/docs/bottom-tab-navigator/)
+  - [react-native-paper](https://callstack.github.io/react-native-paper/)
+  - [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- **Tools:** Node.js, npm/Yarn
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## Getting Started
 
-```bash
-npm run reset-project
-```
- Screenshots-
-<img src="https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0001.jpg?raw=true" alt="Taskvy Screenshot" width="300" />
-<img src="https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0002.jpg?raw=true" alt="Taskvy Screenshot" width="300" />
+### Prerequisites
 
-<img src="https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0003.jpg?raw=true" alt="Taskvy Screenshot" width="300" />
+- [Node.js](https://nodejs.org/en/) and npm installed on your machine.
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) installed globally:
 
-<img src="https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0004.jpg?raw=true" alt="Taskvy Screenshot" width="300" />
-
-<img src="https://github.com/harshvyas0803/TASKVY/blob/main/assets/IMG-20250305-WA0005.jpg?raw=true" alt="Taskvy Screenshot" width="300" />
-
- 
+  ```bash
+  npm install -g expo-cli
+  npm i
+  expo start
